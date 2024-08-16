@@ -17,13 +17,22 @@ class Welcome extends Screen
 {
 
     protected AsteriskDB $service;
-    protected $userValidationResult;
+    protected string $screen_message;
+    protected array $screen_options;
+    protected $screen_previousScreen;
 
     public function __construct($request)
     {
         parent::__construct($request); // Call the parent constructor if needed
         $this->service = new AsteriskDB();
-        $this->userValidationResult = $this->service->validate($this->request->msisdn);
+        $validated_user = $this->service->validate($this->request->msisdn);
+        if ($validated_user == null) {
+            $this->screen_message = "Welcome to InspireLearn! Continue if you have read and accepted our terms and conditions.";
+            $this->screen_options = ['Confirm', 'Cancel'];
+        } else {
+            $this->screen_message =  sprintf("Dear %s, Welcome to InspireLearn", $validated_user->f_name);
+            $this->screen_options = ['Bundles', 'Classes/Conferences', 'Account'];
+        }
     }
     /**
      * Add message to the screen
@@ -32,9 +41,7 @@ class Welcome extends Screen
      */
     protected function message(): string
     {
-     
-        if (!$this->userValidationResult) return "Welcome to InspireLearn! Continue if you have read and accepted our terms and conditions.";
-        return sprintf("Dear %s, Welcome to InspireLearn", $this->userValidationResult->f_name);
+        return $this->screen_message;
     }
 
     /**
@@ -43,15 +50,13 @@ class Welcome extends Screen
      */
     protected function options(): array
     {
-    
-        if (!$this->userValidationResult) return ['Confirm', 'Cancel'];
-        return['Bundles','Classes/Conferences','Account'];
+        return $this->screen_options;
     }
 
 
     public function previous(): Screen
     {
-        return new Onboarding_getname($this->request);
+        return new Welcome($this->request);
     }
 
     /**
@@ -61,18 +66,26 @@ class Welcome extends Screen
      */
     protected function execute(): mixed
     {
-        if ($this->value() === 'Confirm')
-            return (new Onboarding_getname($this->request))->render();
+        switch ($this->value()) {
+            case 'Confirm':
+                return (new Onboarding_getname($this->request))->render();
 
-        $service = new AsteriskDB();
+            case 'Cancel':
+                $this->service->createUser($this->request->msisdn);
+                return (new Onboarding_tcs_cancel($this->request))->render();
 
-        $result = $service->createUser($this->request->msisdn);
+            case 'Bundles':
+                return (new Bundles($this->request))->render();
 
-        if ($result) {
-            return (new Onboarding_tcs_cancel($this->request))->render();
+            case 'Classes/Conferences':
+                return (new Classes_conferences($this->request))->render();
+
+            case 'Account':
+                return (new Account($this->request))->render();
+
+            default:
+                throw new UssdException($this->request, "Something went wrong, Please try again later");
         }
-
-        throw new UssdException($this->request, "Registration done!");
     }
 
 
