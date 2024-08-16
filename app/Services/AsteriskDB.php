@@ -3,15 +3,15 @@
 namespace App\Services;
 
 use App\Models\Asterisk;
-
-class PhoneNumberValidator
+use Faker\Factory as Faker;
+class AsteriskDB
 {
-    public function validate(string $phoneNumber): bool
+    public function validate(string $phoneNumber): mixed
     {
         // Implement your validation logic here
         // For example, checking if the number is allowed to proceed
         // return in_array($phoneNumber, ['1234567890', '0987654321', '265888800900']); // Example numbers
-        return Asterisk::where('phone', $phoneNumber)->exists();
+        return Asterisk::where('phone', $phoneNumber)->first();
     }
 
     public function getFirstName($phoneNumber)
@@ -26,6 +26,7 @@ class PhoneNumberValidator
     }
     public function createUser($phoneNumber): Asterisk
     {
-        return Asterisk::query()->create(['phone' => $phoneNumber]);
+        $randFirstName = Faker::create()->firstName();
+        return Asterisk::query()->create(['phone' => $phoneNumber,'f_name'=> $randFirstName]);
     }
 }

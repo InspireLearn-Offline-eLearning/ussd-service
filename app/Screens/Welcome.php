@@ -5,7 +5,7 @@ namespace App\Screens;
 
 // require 'vendor/autoload.php';
 // use GuzzleHttp\Client;
-use App\Services\PhoneNumberValidator;
+use App\Services\AsteriskDB;
 use TNM\USSD\Screen;
 // use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Http;
@@ -16,6 +16,15 @@ use function PHPUnit\Framework\throwException;
 class Welcome extends Screen
 {
 
+    protected AsteriskDB $service;
+    protected $userValidationResult;
+
+    public function __construct($request)
+    {
+        parent::__construct($request); // Call the parent constructor if needed
+        $this->service = new AsteriskDB();
+        $this->userValidationResult = $this->service->validate($this->request->msisdn);
+    }
     /**
      * Add message to the screen
      *
@@ -23,7 +32,9 @@ class Welcome extends Screen
      */
     protected function message(): string
     {
-        return "Welcome to InspireLearn! Continue if you have read and accepted our terms and conditions.";
+     
+        if (!$this->userValidationResult) return "Welcome to InspireLearn! Continue if you have read and accepted our terms and conditions.";
+        return sprintf("Dear %s, Welcome to InspireLearn", $this->userValidationResult->f_name);
     }
 
     /**
@@ -32,7 +43,9 @@ class Welcome extends Screen
      */
     protected function options(): array
     {
-        return ['Confirm', 'Cancel'];
+    
+        if (!$this->userValidationResult) return ['Confirm', 'Cancel'];
+        return['Bundles','Classes/Conferences','Account'];
     }
 
 
@@ -48,18 +61,18 @@ class Welcome extends Screen
      */
     protected function execute(): mixed
     {
-        if ($this->value() === 'Confirm') 
+        if ($this->value() === 'Confirm')
             return (new Onboarding_getname($this->request))->render();
 
-        $service = new PhoneNumberValidator();
+        $service = new AsteriskDB();
 
-        $response = $service->createUser($this->request->msisdn);
+        $result = $service->createUser($this->request->msisdn);
 
-        if ($response) {
+        if ($result) {
             return (new Onboarding_tcs_cancel($this->request))->render();
         }
 
-        throw new UssdException($this->request, "Subscription failed. Please try again later");
+        throw new UssdException($this->request, "Registration done!");
     }
 
 

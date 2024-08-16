@@ -6,7 +6,7 @@ namespace App\Screens;
 
 use TNM\USSD\Screen;
 
-class Onboarding_getname extends Screen
+class Onboarding_usertype extends Screen
 {
 
     /**
@@ -16,7 +16,7 @@ class Onboarding_getname extends Screen
      */
     protected function message(): string
     {
-        return "Enter your first name";
+        return "You are joining as a ...";
     }
 
     /**
@@ -25,16 +25,16 @@ class Onboarding_getname extends Screen
      */
     protected function options(): array
     {
-        return [];
+        return ['Student', 'Teacher', 'Other'];
     }
 
     /**
-     * Previous screen
-     * return Screen $screen
-     */
+    * Previous screen
+    * return Screen $screen
+    */
     public function previous(): Screen
     {
-        return new Welcome($this->request);
+        return new Onboarding_getname($this->request);
     }
 
     /**
@@ -45,12 +45,10 @@ class Onboarding_getname extends Screen
     protected function execute(): mixed
     {
         // TODO: Implement execute() method.
-        $this->addPayload('f_name', $this->value());
-        return (new Onboarding_usertype($this->request))->render();
+        $this->addPayload('usertype', $this->value());
+        
+        if ($this->value() === 'Other')  return (new Onboarding_done($this->request))->render();
 
-    }
-    public function goesBack(): bool
-    {
-        return false;
+        else return (new Onboarding_getcode($this->request))->render();
     }
 }
