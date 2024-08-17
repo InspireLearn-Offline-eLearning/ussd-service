@@ -28,7 +28,7 @@ class Welcome extends Screen
         $validated_user = $this->service->validate($this->request->msisdn);
         if ($validated_user == null) {
             $this->screen_message = "Welcome to InspireLearn! Continue if you have read and accepted our terms and conditions.";
-            $this->screen_options = ['Confirm', 'Cancel'];
+            $this->screen_options = ['Continue', 'Cancel'];
         } else {
             $this->screen_message =  sprintf("Dear %s, Welcome to InspireLearn", $validated_user->f_name);
             $this->screen_options = ['Bundles', 'Classes/Conferences', 'Account'];
@@ -67,7 +67,7 @@ class Welcome extends Screen
     protected function execute(): mixed
     {
         switch ($this->value()) {
-            case 'Confirm':
+            case 'Continue':
                 $this->service->createUser($this->request->msisdn);
                 return (new Onboarding_getname($this->request))->render();
 
