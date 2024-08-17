@@ -6,7 +6,7 @@ namespace App\Screens;
 
 use TNM\USSD\Screen;
 
-class Onboarding_usertype extends Screen
+class Onboarding_getcode extends Screen
 {
 
     /**
@@ -16,7 +16,7 @@ class Onboarding_usertype extends Screen
      */
     protected function message(): string
     {
-        return "Please select your role:";
+        return "{{message}}";
     }
 
     /**
@@ -25,7 +25,7 @@ class Onboarding_usertype extends Screen
      */
     protected function options(): array
     {
-        return ['Student', 'Teacher', 'Guest'];
+        return [];
     }
 
     /**
@@ -34,7 +34,7 @@ class Onboarding_usertype extends Screen
     */
     public function previous(): Screen
     {
-        return new Onboarding_getname($this->request);
+        return new Welcome($this->request);
     }
 
     /**
@@ -42,13 +42,8 @@ class Onboarding_usertype extends Screen
      *
      * @return mixed
      */
-    protected function execute(): mixed
+    protected function execute()
     {
         // TODO: Implement execute() method.
-        $this->addPayload('role', $this->value());
-        
-        if ($this->value() === 'Guest')  return (new Onboarding_done($this->request))->render();
-
-        else return (new Onboarding_getcode($this->request))->render();
     }
 }

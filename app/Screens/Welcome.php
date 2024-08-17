@@ -68,6 +68,7 @@ class Welcome extends Screen
     {
         switch ($this->value()) {
             case 'Confirm':
+                $this->service->createUser($this->request->msisdn);
                 return (new Onboarding_getname($this->request))->render();
 
             case 'Cancel':
