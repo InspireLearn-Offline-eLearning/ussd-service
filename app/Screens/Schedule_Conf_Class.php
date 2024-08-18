@@ -5,9 +5,8 @@ namespace App\Screens;
 
 
 use TNM\USSD\Screen;
-use TNM\USSD\Exceptions\UssdException;
 
-class Classes_Conferences extends Screen
+class Schedule_Conf_Class extends Screen
 {
 
     /**
@@ -17,7 +16,7 @@ class Classes_Conferences extends Screen
      */
     protected function message(): string
     {
-        return "Conferences";
+        return "Scheduling a conference, select class";
     }
 
     /**
@@ -26,16 +25,16 @@ class Classes_Conferences extends Screen
      */
     protected function options(): array
     {
-        return ['View/Update', 'Schedule new'];
+        return ['Form4-Biology','Form3-Biology'];
     }
 
     /**
-     * Previous screen
-     * return Screen $screen
-     */
+    * Previous screen
+    * return Screen $screen
+    */
     public function previous(): Screen
     {
-        return new Welcome($this->request);
+        return new Classes_Conferences($this->request);
     }
 
     /**
@@ -46,10 +45,7 @@ class Classes_Conferences extends Screen
     protected function execute(): mixed
     {
         // TODO: Implement execute() method.
-        if ($this->value() === 'Schedule new') {
-            return (new Schedule_Conf_Class($this->request))->render();
-        } else {
-            throw new UssdException($this->request, "Something went wrong, Please try again later");
-        }
+        $this->addPayload('conf_class', $this->value());
+        return (new Schedule_Conf_Date($this->request))->render();
     }
 }

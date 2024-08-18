@@ -45,14 +45,8 @@ class Onboarding_done extends Screen
         return new Onboarding_done($this->request);
     }
 
-    /**
-     * Execute the selected option/action
-     *
-     * @return mixed
-     */
     protected function execute(): mixed
     {
-        // TODO: Implement execute() method.
 
         if ($this->value() === 'Bundles') {
             return (new Bundles($this->request))->render();

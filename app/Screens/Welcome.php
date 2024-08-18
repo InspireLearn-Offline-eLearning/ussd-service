@@ -31,7 +31,8 @@ class Welcome extends Screen
             $this->screen_options = ['Continue', 'Cancel'];
         } else {
             $this->screen_message =  sprintf("Dear %s, Welcome to InspireLearn", $validated_user->f_name);
-            $this->screen_options = ['Bundles', 'Classes/Conferences', 'Account'];
+            $this->screen_options = ['Bundles', 'Conferences', 'Account'];
+
         }
     }
     /**
@@ -78,8 +79,8 @@ class Welcome extends Screen
             case 'Bundles':
                 return (new Bundles($this->request))->render();
 
-            case 'Classes/Conferences':
-                return (new Classes_conferences($this->request))->render();
+            case 'Conferences':
+                return (new Classes_Conferences($this->request))->render();
 
             case 'Account':
                 return (new Account($this->request))->render();
