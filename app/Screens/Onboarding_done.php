@@ -17,7 +17,7 @@ class Onboarding_done extends Screen
     {
         parent::__construct($request);
         $this->service = new AsteriskDB();
-        $created_user = $this->service->addNameRoleToUser($this->request->msisdn,$this->payload("f_name"),$this->payload("role"));
+        $created_user = $this->service->addNameRoleToUser($this->request->msisdn,$this->payload("user_f_name"),$this->payload("user_role"));
         if ($created_user > 0){
             $this->screen_message ="All set! Use the Account option to update and add more info.";
         }

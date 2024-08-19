@@ -45,7 +45,7 @@ class Onboarding_usertype extends Screen
     protected function execute(): mixed
     {
         // TODO: Implement execute() method.
-        $this->addPayload('role', $this->value());
+        $this->addPayload('user_role', $this->value());
         
         if ($this->value() === 'Guest')  return (new Onboarding_done($this->request))->render();
 

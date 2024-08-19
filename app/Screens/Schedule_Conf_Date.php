@@ -16,7 +16,7 @@ class Schedule_Conf_Date extends Screen
 
     protected function options(): array
     {
-        return ['Today','Tomorrow','Enter date'];
+        return ['Today', 'Tomorrow', 'Enter date'];
     }
 
     public function previous(): Screen
@@ -24,9 +24,16 @@ class Schedule_Conf_Date extends Screen
         return new Schedule_Conf_Class($this->request);
     }
 
-    protected function execute():mixed
+    protected function execute(): mixed
     {
-        $this->addPayload('conf_date', $this->value());
-        return (new Schedule_Conf_Time($this->request))->render();
+        if ($this->value() === 'Today') {
+            $this->addPayload('conf_date', date('Y-m-d'));
+            return (new Schedule_Conf_Time($this->request))->render();
+        } elseif ($this->value() === 'Tomorrow') {
+
+            $this->addPayload('conf_date', date('Y-m-d', strtotime('+1 day')));
+            return (new Schedule_Conf_Time($this->request))->render();
+        }
+        return (new Schedule_Conf_SetDate($this->request))->render();
     }
 }

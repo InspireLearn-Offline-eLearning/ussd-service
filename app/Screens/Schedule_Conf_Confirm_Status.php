@@ -16,7 +16,7 @@ class Schedule_Conf_Confirm_Status extends Screen
      */
     protected function message(): string
     {
-        return "{{message}}";
+        return " Conference scheduled successfully!";
     }
 
     /**
@@ -37,13 +37,18 @@ class Schedule_Conf_Confirm_Status extends Screen
         return new Welcome($this->request);
     }
 
-    /**
-     * Execute the selected option/action
-     *
-     * @return mixed
-     */
-    protected function execute()
+    protected function execute(): mixed
     {
         // TODO: Implement execute() method.
+    }
+
+    public function goesBack(): bool
+    {
+        return false;
+    }
+
+    public function acceptsResponse(): bool
+    {
+        return false;
     }
 }

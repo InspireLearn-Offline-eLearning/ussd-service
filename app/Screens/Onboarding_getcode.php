@@ -42,7 +42,7 @@ class Onboarding_getcode extends Screen
      *
      * @return mixed
      */
-    protected function execute()
+    protected function execute(): mixed
     {
         // TODO: Implement execute() method.
     }

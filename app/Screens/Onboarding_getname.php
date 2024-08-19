@@ -5,15 +5,12 @@ namespace App\Screens;
 
 
 use TNM\USSD\Screen;
-
+use TNM\USSD\Http\Validates;
 class Onboarding_getname extends Screen
 {
 
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
+    use Validates;
+
     protected function message(): string
     {
         return "Enter your first name";
@@ -44,10 +41,16 @@ class Onboarding_getname extends Screen
      */
     protected function execute(): mixed
     {
-        // TODO: Implement execute() method.
-        $this->addPayload('f_name', $this->value());
+        
+        $this->validate($this->request,'first name');
+        $this->addPayload('user_f_name', $this->value());
         return (new Onboarding_usertype($this->request))->render();
 
+    }
+
+    protected function rules() : string
+    {
+        return 'regex:/^[a-zA-Z][a-z]{2,44}$/';
     }
     public function goesBack(): bool
     {
