@@ -5,7 +5,7 @@ namespace App\Screens;
 
 
 use TNM\USSD\Screen;
-// use TNM\USSD\Http\Validates;
+use DateTime;
 use TNM\USSD\Exceptions\UssdException;
 
 class Schedule_Conf_Time extends Screen
@@ -40,12 +40,6 @@ class Schedule_Conf_Time extends Screen
     }
 
 
-    // protected function rules(): string
-    // {
-
-    //     return 'regex:/^\d{4}$/';
-    // }
-
     function validateTimeInput($input)
     {
         date_default_timezone_set('Africa/Blantyre'); 
@@ -59,11 +53,8 @@ class Schedule_Conf_Time extends Screen
             
             $currentTime = date('H:i');
 
-            \Log::debug('Input time is: ', ['value' => $inputTime]);
-            \Log::debug('current time is: ', ['value' => $currentTime]);
-
-            if ($inputTime < $currentTime) {
-                return false; // Time is in the past
+            if ($inputTime < $currentTime && $this->payload('conf_date') == (new DateTime())->format('Y-m-d')) {
+                return false; 
             }
 
             return $inputTime; 

@@ -67,10 +67,10 @@ class Schedule_Conf_SetDate extends Screen
             }
 
             $inputDate = new DateTime($dateString);
-            $currentDate = new DateTime();
-            $currentDate = $currentDate->format('Y-m-d');
+            // $currentDate = new DateTime();
+            // $currentDate = $currentDate->format('Y-m-d');
             
-            if ($inputDate < $currentDate) {
+            if ($inputDate < (new DateTime())->format('Y-m-d')) {
 
                 return false;
             }
