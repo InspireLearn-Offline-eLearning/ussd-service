@@ -40,12 +40,26 @@ class AsteriskDB
 
     public function getConferences($phoneNumber)
     {
-        $avail = Asterisk_Conference::query()->where('organiser_id', $phoneNumber)->get();
+        $avail = Asterisk_Conference::query()->where('organiser_id', $phoneNumber)->limit(3)->get();
 
         $avail->pluck('course_id')->toArray();
 
         $formattedCourses = $avail->map(function ($conference) {
-            return $conference->course_id . ' today at ' . $conference->schedule->format('H:i');
+            $currentDate = now()->startOfDay();
+            $conferenceDate = $conference->schedule->startOfDay();
+
+            if ($conferenceDate->equalTo($currentDate)) {
+                // If the conference is today
+                $suffix = ' today @' . $conference->schedule->format('H:i');
+            } elseif ($conferenceDate->equalTo($currentDate->copy()->addDay())) {
+                // If the conference is tomorrow
+                $suffix = ' tomorrow @' . $conference->schedule->format('H:i');
+            } else {
+                // If the conference is after tomorrow
+                $suffix = ' on ' . $conference->schedule->format('D, d M'); //'l, F j': Formats the date as a readable string, e.g., "Friday, August 19".
+            }
+
+            return $conference->course_id . $suffix;
         })->toArray();
 
         return $formattedCourses;
