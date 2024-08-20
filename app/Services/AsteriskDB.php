@@ -42,7 +42,12 @@ class AsteriskDB
     {
         $avail = Asterisk_Conference::query()->where('organiser_id', $phoneNumber)->get();
 
-       return $avail->pluck('course_id')->toArray();
+        $avail->pluck('course_id')->toArray();
 
+        $formattedCourses = $avail->map(function ($conference) {
+            return $conference->course_id . ' today at ' . $conference->schedule->format('H:i');
+        })->toArray();
+
+        return $formattedCourses;
     }
 }

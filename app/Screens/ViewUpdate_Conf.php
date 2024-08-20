@@ -18,10 +18,10 @@ class ViewUpdate_Conf extends Screen
         $this->service = new AsteriskDB();
         $getconferences = $this->service->getconferences($this->request->msisdn);
         if ($getconferences == null) {
-            $this->screen_message = "You have no conferences";
+            $this->screen_message = "You have no upcoming conferences";
             $this->screen_options = [];
         }else{
-            $this->screen_message = "Select a conference ";
+            $this->screen_message = "Upcoming conference(s)";
             $this->screen_options = $getconferences;
         }
     }
