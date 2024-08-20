@@ -59,6 +59,9 @@ class Schedule_Conf_Time extends Screen
             
             $currentTime = date('H:i');
 
+            \Log::debug('Input time is: ', ['value' => $inputTime]);
+            \Log::debug('current time is: ', ['value' => $currentTime]);
+
             if ($inputTime < $currentTime) {
                 return false; // Time is in the past
             }
