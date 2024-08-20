@@ -10,11 +10,6 @@ use TNM\USSD\Exceptions\UssdException;
 class Classes_Conferences extends Screen
 {
 
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
     protected function message(): string
     {
         return "Conferences";
@@ -49,7 +44,7 @@ class Classes_Conferences extends Screen
         if ($this->value() === 'Schedule new') {
             return (new Schedule_Conf_Class($this->request))->render();
         } else {
-            throw new UssdException($this->request, "Something went wrong, Please try again later");
+            return (new ViewUpdate_Conf($this->request))->render();
         }
     }
 }

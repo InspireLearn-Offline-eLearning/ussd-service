@@ -21,6 +21,8 @@ class Welcome extends Screen
     protected array $screen_options;
     protected $screen_previousScreen;
 
+    // protected  $user_object;
+
     public function __construct($request)
     {
         parent::__construct($request); // Call the parent constructor if needed
@@ -32,6 +34,8 @@ class Welcome extends Screen
         } else {
             $this->screen_message =  sprintf("Dear %s, Welcome to InspireLearn", $validated_user->f_name);
             $this->screen_options = ['Bundles', 'Conferences', 'Account'];
+            // $this->user_object = $validated_user;
+            // $this->addPayload('user_obj',$validated_user);
 
         }
     }
@@ -67,6 +71,7 @@ class Welcome extends Screen
      */
     protected function execute(): mixed
     {
+
         switch ($this->value()) {
             case 'Continue':
                 $this->service->createUser($this->request->msisdn);

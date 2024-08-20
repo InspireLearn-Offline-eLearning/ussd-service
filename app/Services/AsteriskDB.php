@@ -32,9 +32,17 @@ class AsteriskDB
             $code = mt_rand(1000, 9999);
 
             $exists = Asterisk_Conference::where('conference_id', $code)->exists();
-            
         } while ($exists);
 
         return Asterisk_Conference::query()->create(['conference_id' => $code, 'organiser_id' => $phoneNumber, 'schedule' => $conf_schedule, 'course_id' => $conf_course, 'class_id' => $conf_class_id]);
+    }
+
+
+    public function getConferences($phoneNumber)
+    {
+        $avail = Asterisk_Conference::query()->where('organiser_id', $phoneNumber)->get();
+
+       return $avail->pluck('course_id')->toArray();
+
     }
 }
