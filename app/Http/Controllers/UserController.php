@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Asterisk;
+use App\Models\Asterisk_User;
 use Illuminate\Support\Str;
 use Faker\Factory as Faker;
 
@@ -35,7 +35,7 @@ class UserController extends Controller
             //     'role' => 'guest',
             //     // Other fields will use default values
             // ]);
-            $newUser = new Asterisk();
+            $newUser = new Asterisk_User();
             $newUser->phone = $phone;
             $newUser->user_id = $randomNumber;
             $newUser->f_name = $randomFirstName;
@@ -61,7 +61,7 @@ class UserController extends Controller
     public function getUser(Request $request)
     {
         $phone = $request->input('phone');
-        $user = Asterisk::where('phone', $phone)->first();
+        $user = Asterisk_User::where('phone', $phone)->first();
         return response()->json(['user' => $user], 200);
     }
 }
