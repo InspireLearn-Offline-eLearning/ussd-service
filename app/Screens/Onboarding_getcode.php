@@ -5,45 +5,37 @@ namespace App\Screens;
 
 
 use TNM\USSD\Screen;
+use App\Services\AsteriskDB;
 
 class Onboarding_getcode extends Screen
 {
-
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
+    
+    protected AsteriskDB $service;
+    public function __construct($request)
+    {
+        parent::__construct($request);
+        $this->service = new AsteriskDB();
+        $this->service->addNameRoleToUser($this->request->msisdn, $this->payload("f_name"), $this->payload("user_role"));
+    }
     protected function message(): string
     {
-        return "{{message}}";
+        return "Please enter joining code";
     }
 
-    /**
-     * Add options to the screen
-     * @return array
-     */
     protected function options(): array
     {
         return [];
     }
 
-    /**
-    * Previous screen
-    * return Screen $screen
-    */
     public function previous(): Screen
     {
-        return new Welcome($this->request);
+        return new Onboarding_usertype($this->request);
     }
 
-    /**
-     * Execute the selected option/action
-     *
-     * @return mixed
-     */
     protected function execute(): mixed
     {
         // TODO: Implement execute() method.
+        $this->addPayload('joining_code', $this->value());
+        return (new Onboarding_Join_Confirm($this->request))->render();
     }
 }

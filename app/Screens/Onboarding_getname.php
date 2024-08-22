@@ -43,7 +43,7 @@ class Onboarding_getname extends Screen
     {
         
         $this->validate($this->request,'first name');
-        $this->addPayload('user_f_name', $this->value());
+        $this->addPayload('f_name', $this->value());
         return (new Onboarding_usertype($this->request))->render();
 
     }

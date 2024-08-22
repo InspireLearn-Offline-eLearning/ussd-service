@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Asterisk_ClassRegistration;
+use App\Models\Asterisk_CourseRegistration;
 use App\Models\Asterisk_User;
 use App\Models\Asterisk_Conference;
+use App\Models\Asterisk_Courses;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
 
@@ -16,8 +19,8 @@ class AsteriskDB
 
     public function createUser($phoneNumber): Asterisk_User
     {
-        $randFirstName = Faker::create()->firstName();
-        return Asterisk_User::query()->create(['phone' => $phoneNumber, 'f_name' => $randFirstName]);
+
+        return Asterisk_User::query()->create(['phone' => $phoneNumber, 'user_id' => $phoneNumber]);
     }
 
     public function addNameRoleToUser($phoneNumber, $f_name, $role): int
@@ -63,5 +66,77 @@ class AsteriskDB
         })->toArray();
 
         return $formattedCourses;
+    }
+
+
+    public function joinCodeValidation($code, $phone)
+    {
+        $timeLimit = now()->subDays(3);
+        $course = Asterisk_Courses::with(['class.school'])->where('joining_key', $code)->first();
+
+        if ($course) {
+            if ($course->created_at < $timeLimit) {
+                return [
+                    'status' => false,
+                    'message' => "Registration expired!"
+                ];
+            }
+
+            $classId = $course->class_id;
+
+            // Check if the student is already registered in the class
+            $classRegistration = Asterisk_ClassRegistration::where('user_id', $phone)->first();
+
+            if ($classRegistration) {
+                if ($classRegistration->class_id != $classId) {
+                    return [
+                        'status' => false,
+                        'message' => "You can't register to another class"
+                    ];
+                }
+            } else {
+                // Automatically register the student to the class
+
+                Asterisk_ClassRegistration::create([
+                    'class_id' => $classId,
+                    'user_id' => $phone,
+                    'class_reg_id' => $classId . '_' . $phone
+                ]);
+            }
+            // Register the student to the course
+            $existingRegistration = Asterisk_CourseRegistration::where('course_id', $course->id)
+                ->where('user_id', $phone)
+                ->first();
+
+            if ($existingRegistration) {
+                return  [
+                    'status' => false,
+                    'message' => "You are already registered for this course"
+                ];
+            }
+
+
+            return [
+                'status' => true,
+                'message' => "Registration successful",
+                'course' => $course
+            ];
+        } else {
+            return  [
+                'status' => false,
+                'message' => "Invalid code"
+            ];
+        }
+    }
+
+    public function joinCourseRegistration($phone, $course_id)
+    {
+
+        return Asterisk_CourseRegistration::create([
+            'course_id' => $course_id,
+            'user_id' => $phone,
+            'role' => 'student',
+            'course_reg_id' => $course_id . '_' . $phone
+        ]);
     }
 }

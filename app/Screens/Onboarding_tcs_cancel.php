@@ -3,51 +3,39 @@
 
 namespace App\Screens;
 
-use Exception;
+
 use TNM\USSD\Screen;
 
 class Onboarding_tcs_cancel extends Screen
 {
 
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
+
     protected function message(): string
     {
-        return "You can access our terms and conditions, at inspirelearnmw.com or a nearest school.";
+        return "You can access the Terms of Use from our website or any nearby registered school";
     }
 
-    /**
-     * Add options to the screen
-     * @return array
-     */
+
     protected function options(): array
     {
         return [];
     }
 
-    /**
-     * Previous screen
-     * return Screen $screen
-     */
 
     public function previous(): Screen
     {
         return new Welcome($this->request);
     }
 
-    /**
-     * Execute the selected option/action
-     *
-     * @return mixed
-     */
+
     protected function execute(): mixed
     {
         // TODO: Implement execute() method.
-        //register the requester  into the DB as a stage 0 user.
+    }
 
+    public function goesBack(): bool
+    {
+        return false;
     }
 
     public function acceptsResponse(): bool
