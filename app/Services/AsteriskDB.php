@@ -7,6 +7,7 @@ use App\Models\Asterisk_CourseRegistration;
 use App\Models\Asterisk_User;
 use App\Models\Asterisk_Conference;
 use App\Models\Asterisk_Courses;
+use App\Models\Asterisk_InvalidCodeAttempts;
 use App\Models\Asterisk_UserRequests;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
@@ -73,6 +74,20 @@ class AsteriskDB
     public function joinCodeValidation($code, $phone)
     {
         $timeLimit = now()->subDays(3);
+        $maxfailedAttempts = 2;
+        $maxCapacity = 2; // Example threshold
+
+        $recentFailedAttempts = Asterisk_InvalidCodeAttempts::where('phone', $phone)
+            ->where('attempted_at', '>=', now()->subMinutes(30))
+            ->count();
+
+        if ($recentFailedAttempts >= $maxfailedAttempts) {
+            return [
+                'status' => false,
+                'message' => "Too many failed attempts. Please try again later."
+            ];
+        }
+
         $course = Asterisk_Courses::with(['class.school'])->where('joining_key', $code)->first();
 
         if ($course) {
@@ -84,10 +99,9 @@ class AsteriskDB
             }
 
 
-            $maxCapacity = 2; // Example threshold
 
             $currentRegistrations = Asterisk_CourseRegistration::where('course_id', $course->course_id)->count();
-    
+
             // Check if the course has reached the maximum capacity
             if ($currentRegistrations >= $maxCapacity) {
                 return [
@@ -136,6 +150,14 @@ class AsteriskDB
                 'course' => $course
             ];
         } else {
+
+            Asterisk_InvalidCodeAttempts::create([
+                'phone' => $phone,
+                'code' => $code,
+                'attempt_id' => time(),
+                'attempted_at' => now(),
+            ]);
+
             return  [
                 'status' => false,
                 'message' => "Invalid code"
@@ -163,6 +185,5 @@ class AsteriskDB
             'role' => 'student',
             'course_reg_id' => $course_id . '_' . $phone
         ]);
-
     }
 }
