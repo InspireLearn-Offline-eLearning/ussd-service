@@ -83,6 +83,19 @@ class AsteriskDB
                 ];
             }
 
+
+            $maxCapacity = 2; // Example threshold
+
+            $currentRegistrations = Asterisk_CourseRegistration::where('course_id', $course->course_id)->count();
+    
+            // Check if the course has reached the maximum capacity
+            if ($currentRegistrations >= $maxCapacity) {
+                return [
+                    'status' => false,
+                    'message' => "Capacity reached, contact your teacher or school."
+                ];
+            }
+
             $classId = $course->class_id;
 
             // Check if the student is already registered in the class
@@ -150,6 +163,6 @@ class AsteriskDB
             'role' => 'student',
             'course_reg_id' => $course_id . '_' . $phone
         ]);
-        
+
     }
 }
