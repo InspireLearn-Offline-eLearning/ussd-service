@@ -5,6 +5,7 @@ namespace App\Screens;
 
 
 use TNM\USSD\Screen;
+use TNM\USSD\Exceptions\UssdException;
 
 class Onboarding_usertype extends Screen
 {
@@ -29,9 +30,9 @@ class Onboarding_usertype extends Screen
     }
 
     /**
-    * Previous screen
-    * return Screen $screen
-    */
+     * Previous screen
+     * return Screen $screen
+     */
     public function previous(): Screen
     {
         return new Onboarding_getname($this->request);
@@ -44,11 +45,22 @@ class Onboarding_usertype extends Screen
      */
     protected function execute(): mixed
     {
-        // TODO: Implement execute() method.
-        $this->addPayload('user_role', $this->value());
-        
-        if ($this->value() === 'Guest')  return (new Onboarding_done($this->request))->render();
+        switch ($this->value()) {
+            
+            case 'Guest':
+                $this->addPayload('user_role', 'guest');
+                return (new Onboarding_done($this->request))->render();
 
-        else return (new Onboarding_getcode($this->request))->render();
+            case 'Teacher':
+                $this->addPayload('user_role', 'teacher');
+                return (new Onboarding_getcode($this->request))->render();
+
+            case 'Student':
+                $this->addPayload('user_role', 'student');
+                return (new Onboarding_getcode($this->request))->render();
+
+            default:
+                throw new UssdException($this->request, "Something went wrong, Please try again later");
+        }
     }
 }

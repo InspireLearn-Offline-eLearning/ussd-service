@@ -17,10 +17,14 @@ class Onboarding_Join_Status extends Screen
     {
         parent::__construct($request);
         $this->service = new AsteriskDB();
-        $result = $this->service->joinCourseRegistration($this->request->msisdn, $this->payload('course_id'));
+        $result = $this->service->joinCourseRegistration($this->request->msisdn, $this->payload('course_id'), $this->payload('user_role'));
         if ($result != null) {
 
-            $this->screen_message = "Successfully enrolled as a " . $result->role;
+            if ($this->payload('user_role') == 'teacher') {
+                $this->screen_message = "Successfully enrolled, waiting approval as a teacher";
+            } else {
+                $this->screen_message = "Successfully enrolled as a " . $result->role;
+            }
             $this->screen_options = [];
         } else {
             $this->screen_message = "Unable to register at this time";
@@ -44,10 +48,7 @@ class Onboarding_Join_Status extends Screen
     }
 
 
-    protected function execute(): mixed 
-    {
-
-    }
+    protected function execute(): mixed {}
 
     public function goesBack(): bool
     {

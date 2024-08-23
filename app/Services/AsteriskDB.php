@@ -7,6 +7,7 @@ use App\Models\Asterisk_CourseRegistration;
 use App\Models\Asterisk_User;
 use App\Models\Asterisk_Conference;
 use App\Models\Asterisk_Courses;
+use App\Models\Asterisk_UserRequests;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
 
@@ -129,8 +130,19 @@ class AsteriskDB
         }
     }
 
-    public function joinCourseRegistration($phone, $course_id)
+    public function joinCourseRegistration($phone, $course_id, $role)
     {
+
+        if ($role == 'teacher') {
+
+            Asterisk_UserRequests::create([
+                'request_id' => time(),
+                'user_id' => $phone,
+                'request_type' => 'role_change',
+                'request_data' => '{ "requested_role": "teacher" }',
+                'context' => 'course_registration'
+            ]);
+        }
 
         return Asterisk_CourseRegistration::create([
             'course_id' => $course_id,
@@ -138,5 +150,6 @@ class AsteriskDB
             'role' => 'student',
             'course_reg_id' => $course_id . '_' . $phone
         ]);
+        
     }
 }
