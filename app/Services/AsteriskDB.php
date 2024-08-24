@@ -9,6 +9,7 @@ use App\Models\Asterisk_Conference;
 use App\Models\Asterisk_Courses;
 use App\Models\Asterisk_InvalidCodeAttempts;
 use App\Models\Asterisk_UserRequests;
+use Carbon\Carbon;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
 
@@ -45,29 +46,55 @@ class AsteriskDB
 
     public function getConferences($phoneNumber)
     {
-        $avail = Asterisk_Conference::query()->where('organiser_id', $phoneNumber)->limit(3)->get();
-
-        $avail->pluck('course_id')->toArray();
+        // $avail = Asterisk_Conference::query()->where('organiser_id', $phoneNumber)->limit(3)->get();
+        $avail = Asterisk_Conference::query()
+            ->join('course_registration', 'conference.course_id', '=', 'course_registration.course_id')
+            ->join('course', 'course.course_id', '=', 'conference.course_id')
+            ->where('course_registration.user_id', '=', $phoneNumber)
+            ->where('conference.schedule', '>=', now()->startOfDay())
+            ->select('conference.conference_id', 'course.name', 'conference.schedule')
+            ->orderBy('conference.schedule', 'asc')
+            ->limit(3)
+            ->get();
 
         $formattedCourses = $avail->map(function ($conference) {
             $currentDate = now()->startOfDay();
-            $conferenceDate = $conference->schedule->startOfDay();
+            $conferenceDate = Carbon::parse($conference['schedule'])->startOfDay();
 
             if ($conferenceDate->equalTo($currentDate)) {
-                // If the conference is today
-                $suffix = ' today @' . $conference->schedule->format('H:i');
+                $suffix = ' today @' . Carbon::parse($conference['schedule'])->format('H:i');
             } elseif ($conferenceDate->equalTo($currentDate->copy()->addDay())) {
-                // If the conference is tomorrow
-                $suffix = ' tomorrow @' . $conference->schedule->format('H:i');
+                $suffix = ' tomorrow @' . Carbon::parse($conference['schedule'])->format('H:i');
             } else {
-                // If the conference is after tomorrow
-                $suffix = ' on ' . $conference->schedule->format('D, d M'); //'l, F j': Formats the date as a readable string, e.g., "Friday, August 19".
+                $suffix = ' on ' . Carbon::parse($conference['schedule'])->format('D, d M');
             }
 
-            return $conference->course_id . $suffix;
+            return $conference->name . $suffix;
         })->toArray();
 
         return $formattedCourses;
+
+        // $avail->pluck('course_name')->toArray();
+
+        // $formattedCourses = $avail->map(function ($conference) {
+        //     $currentDate = now()->startOfDay();
+        //     $conferenceDate = $conference->schedule->startOfDay();
+
+        //     if ($conferenceDate->equalTo($currentDate)) {
+        //         // If the conference is today
+        //         $suffix = ' today @' . $conference->schedule->format('H:i');
+        //     } elseif ($conferenceDate->equalTo($currentDate->copy()->addDay())) {
+        //         // If the conference is tomorrow
+        //         $suffix = ' tomorrow @' . $conference->schedule->format('H:i');
+        //     } else {
+        //         // If the conference is after tomorrow
+        //         $suffix = ' on ' . $conference->schedule->format('D, d M'); //'l, F j': Formats the date as a readable string, e.g., "Friday, August 19".
+        //     }
+
+        //     return $conference->name . $suffix;
+        // })->toArray();
+
+        // return $formattedCourses;
     }
 
 

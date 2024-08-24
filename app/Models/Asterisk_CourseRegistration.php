@@ -10,4 +10,8 @@ class Asterisk_CourseRegistration extends Model
     protected $connection = 'asterisk';
     protected $table = 'course_registration';
     protected $fillable = ['course_reg_id','user_id','course_id','role'];
+    public function course()
+    {
+        return $this->belongsTo(Asterisk_Courses::class, 'course_id','course_id');	
+    }
 }

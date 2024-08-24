@@ -15,5 +15,10 @@ class Asterisk_Conference extends Model
     ];
     
     protected $fillable = ['conference_id','organiser_id','schedule','course_id','class_id'];
+    public function course()
+    {
+        return $this->belongsTo(Asterisk_Courses::class, 'course_id','course_id');
+    }
+    
  
 }

@@ -16,4 +16,9 @@ class Asterisk_Courses extends Model
 
         return $this->belongsTo(Asterisk_Classes::class, 'class_id', 'class_id');
     }
+
+    public function conference()
+    {
+        return $this->hasMany(Asterisk_Conference::class, 'course_id','course_id');
+    }
 }
