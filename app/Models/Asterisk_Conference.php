@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Asterisk_Conference extends Model
 {
-    // use HasFactory;
+
     protected $connection = 'asterisk';
     protected $table = 'conference';
     protected $casts = [

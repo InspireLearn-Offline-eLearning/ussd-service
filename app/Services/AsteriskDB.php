@@ -69,35 +69,30 @@ class AsteriskDB
                 $suffix = ' on ' . Carbon::parse($conference['schedule'])->format('D, d M');
             }
 
-            return $conference->name . $suffix;
+            return $conference->conference_id . "> " . $conference->name . $suffix;
         })->toArray();
 
         return $formattedCourses;
-
-        // $avail->pluck('course_name')->toArray();
-
-        // $formattedCourses = $avail->map(function ($conference) {
-        //     $currentDate = now()->startOfDay();
-        //     $conferenceDate = $conference->schedule->startOfDay();
-
-        //     if ($conferenceDate->equalTo($currentDate)) {
-        //         // If the conference is today
-        //         $suffix = ' today @' . $conference->schedule->format('H:i');
-        //     } elseif ($conferenceDate->equalTo($currentDate->copy()->addDay())) {
-        //         // If the conference is tomorrow
-        //         $suffix = ' tomorrow @' . $conference->schedule->format('H:i');
-        //     } else {
-        //         // If the conference is after tomorrow
-        //         $suffix = ' on ' . $conference->schedule->format('D, d M'); //'l, F j': Formats the date as a readable string, e.g., "Friday, August 19".
-        //     }
-
-        //     return $conference->name . $suffix;
-        // })->toArray();
-
-        // return $formattedCourses;
     }
 
+    public function getConferenceOrganiser($conference_id)
+    {
+        return Asterisk_Conference::where("conference_id", $conference_id)->first();
+    }
 
+    public function updateConferenceStatus($conference_id, $newStatus)
+    {
+
+        $conference = Asterisk_Conference::where('conference_id', $conference_id)->first();
+
+        if ($conference) {
+            $conference->status = $newStatus;
+            $conference->save();
+            return true;
+        } else {
+            return false; 
+        }
+    }
     public function joinCodeValidation($code, $phone)
     {
         $timeLimit = now()->subDays(3);

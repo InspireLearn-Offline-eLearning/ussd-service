@@ -30,19 +30,12 @@ class ViewUpdate_Conf extends Screen
         return $this->screen_message;
     }
 
-    /**
-     * Add options to the screen
-     * @return array
-     */
+
     protected function options(): array
     {
         return $this->screen_options;
     }
 
-    /**
-     * Previous screen
-     * return Screen $screen
-     */
     public function previous(): Screen
     {
         return new Classes_Conferences($this->request);
@@ -55,6 +48,9 @@ class ViewUpdate_Conf extends Screen
      */
     protected function execute(): mixed
     {
-        // TODO: Implement execute() method.
+        
+        $this->addPayload("selected_conference", $this->value());
+        return (new Conference_Schedule_Options($this->request))->render();
+        
     }
 }
