@@ -44,6 +44,25 @@ class AsteriskDB
     }
 
 
+    public function updateConference($conference_id, $conf_schedule)
+    {
+
+        $conference = Asterisk_Conference::where('conference_id', $conference_id)->first();
+
+        if ($conference) {
+
+            $conference->schedule = $conf_schedule;
+
+            $conference->save();
+
+            return true;
+
+        } else {
+
+            return false;
+            
+        }
+    }
     public function getConferences($phoneNumber)
     {
         // $avail = Asterisk_Conference::query()->where('organiser_id', $phoneNumber)->limit(3)->get();
@@ -90,7 +109,7 @@ class AsteriskDB
             $conference->save();
             return true;
         } else {
-            return false; 
+            return false;
         }
     }
     public function joinCodeValidation($code, $phone)

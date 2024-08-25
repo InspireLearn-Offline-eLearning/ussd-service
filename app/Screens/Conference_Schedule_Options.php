@@ -67,6 +67,7 @@ class Conference_Schedule_Options extends Screen
                 return (new Conference_Schedule_Cancel_Confirmation($this->request))->render();
 
             case 'Reschedule':
+                $this->addPayload('reschedule', "1");
                 return (new Schedule_Conf_Date($this->request))->render();
 
             case 'Yes':

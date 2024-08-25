@@ -9,14 +9,38 @@ use TNM\USSD\Screen;
 class Schedule_Conf_Date extends Screen
 {
 
+    protected string $screen_message;
+    protected array $screen_options;
+
+    public function __construct($request)
+    {
+        parent::__construct($request);
+        
+        \Log::debug('Paylaod in Date: ', ['value' => $this->payload("reschedule")]);
+
+        if ($this->payload("reschedule") === "1") {
+
+            $this->screen_message="Reschedule conference to a new date:";
+
+            $this->addPayload("conf_class", trim(explode('>', $this->payload("selected_conference"))[1]));
+
+        }else{
+
+            $this->screen_message="Schedule conference for?";
+
+        }
+
+        $this->screen_options=['Today', 'Tomorrow', 'Enter date'];
+
+    }
     protected function message(): string
     {
-        return "Schedule conference for?";
+        return $this->screen_message;
     }
 
     protected function options(): array
     {
-        return ['Today', 'Tomorrow', 'Enter date'];
+        return  $this->screen_options;
     }
 
     public function previous(): Screen

@@ -28,6 +28,7 @@ class Welcome extends Screen
         parent::__construct($request); // Call the parent constructor if needed
         $this->service = new AsteriskDB();
         $validated_user = $this->service->validate($this->request->msisdn);
+        
         if ($validated_user == null) {
             $this->screen_message = "Welcome to InspireLearn! Continue if you have read and accepted our terms and conditions.";
             $this->screen_options = ['Continue', 'Cancel'];
@@ -85,6 +86,7 @@ class Welcome extends Screen
                 return (new Bundles($this->request))->render();
 
             case 'Conferences':
+                $this->addPayload('reschedule', "0");
                 return (new Classes_Conferences($this->request))->render();
 
             case 'Account':
