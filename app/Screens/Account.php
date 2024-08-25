@@ -5,45 +5,69 @@ namespace App\Screens;
 
 
 use TNM\USSD\Screen;
+use TNM\USSD\Exceptions\UssdException;
+use App\Services\AsteriskDB;
 
 class Account extends Screen
 {
 
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
+
+    protected AsteriskDB $service;
+    protected string $screen_message;
+    protected array $screen_options;
+
+
+    public function __construct($request)
+    {
+        parent::__construct($request);
+        $this->service = new AsteriskDB();
+        $user = $this->service->validate($this->request->msisdn);
+
+        if ($user->l_name === null) {
+            $this->screen_message = "Complete your profile registration first";
+            $this->screen_options = ['Start', 'Later'];
+        } else {
+            $this->screen_message = "Manage your account";
+            $this->screen_options = ['Classes', 'Settings', 'Deactivate'];
+        }
+    }
     protected function message(): string
     {
-        return "Account";
+        return $this->screen_message;
     }
 
-    /**
-     * Add options to the screen
-     * @return array
-     */
     protected function options(): array
     {
-        return ['Personal Info','Settings','Deactivate'];
+        return $this->screen_options;
     }
 
-    /**
-    * Previous screen
-    * return Screen $screen
-    */
     public function previous(): Screen
     {
-        return new Home($this->request);
+        return new Welcome($this->request);
     }
 
-    /**
-     * Execute the selected option/action
-     *
-     * @return mixed
-     */
-    protected function execute():mixed
+
+    protected function execute(): mixed
     {
-        // TODO: Implement execute() method.
+        switch ($this->value()) {
+
+            case 'Classes':
+                return (new Conference_Schedule_Cancel_Confirmation($this->request))->render();
+
+            case 'Settings':
+                $this->addPayload('reschedule', "1");
+                return (new Schedule_Conf_Date($this->request))->render();
+
+            case 'Start':
+                return (new Account_Profile_Update_Start($this->request))->render();
+            case 'Later':
+                throw new UssdException($this->request, "Thankyou for your response!");
+
+            case 'Deactivate':
+                throw new UssdException($this->request, "Thankyou for your response!");
+
+            default:
+            return (new Welcome($this->request))->render();
+        }
     }
 }

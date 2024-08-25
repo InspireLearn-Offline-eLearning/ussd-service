@@ -25,6 +25,27 @@ class AsteriskDB
 
         return Asterisk_User::query()->create(['phone' => $phoneNumber, 'user_id' => $phoneNumber]);
     }
+    public function updateUser($user_id, $l_name, $gender, $dob, $special_need)
+    {
+
+        $user = Asterisk_User::where('user_id', $user_id)->first();
+
+        if ($user) {
+
+            $user->l_name = $l_name;
+            $user->sex = $gender;
+            $user->dob = $dob;
+            if ($special_need != "none") {
+                $user->special_needs = $special_need;
+            }
+            $user->save();
+
+            return true;
+        } else {
+
+            return false;
+        }
+    }
 
     public function addNameRoleToUser($phoneNumber, $f_name, $role): int
     {
@@ -52,15 +73,14 @@ class AsteriskDB
         if ($conference) {
 
             $conference->schedule = $conf_schedule;
+            $conference->status = 'rescheduled';
 
             $conference->save();
 
             return true;
-
         } else {
 
             return false;
-            
         }
     }
     public function getConferences($phoneNumber)

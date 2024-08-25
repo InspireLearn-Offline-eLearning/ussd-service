@@ -34,7 +34,7 @@ class Onboarding_getcode extends Screen
 
     protected function execute(): mixed
     {
-        // TODO: Implement execute() method.
+     
         $this->addPayload('joining_code', $this->value());
         return (new Onboarding_Join_Confirm($this->request))->render();
     }
