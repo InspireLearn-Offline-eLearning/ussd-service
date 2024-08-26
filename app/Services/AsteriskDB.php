@@ -119,6 +119,22 @@ class AsteriskDB
         return Asterisk_Conference::where("conference_id", $conference_id)->first();
     }
 
+    public function getUserClassList($user_id)
+    {
+        $avail = Asterisk_ClassRegistration::query()
+            ->join('class', 'class_registration.class_id', '=', 'class.class_id')
+            ->join('school', 'class.school_id', '=', 'school.school_id')
+            ->where('class_registration.user_id', $user_id)
+            ->select('class.class_id as class_id', 'class.name as class_name', 'school.name as school_name')
+            ->get();
+
+        $classlist = $avail->map(function ($class_registration) {
+
+            return $class_registration->class_id . ": " . $class_registration->class_name . " @ " . $class_registration->school_name;
+        })->toArray();
+
+        return $classlist;
+    }
     public function updateConferenceStatus($conference_id, $newStatus)
     {
 

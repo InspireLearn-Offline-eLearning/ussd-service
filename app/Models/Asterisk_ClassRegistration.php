@@ -12,4 +12,8 @@ class Asterisk_ClassRegistration extends Model
     protected $table = 'class_registration';
 
     protected $fillable = ['class_reg_id','user_id','class_id',];
+    public function class()
+    {
+        return $this->belongsTo(Asterisk_Classes::class, 'class_id','class_id');	
+    }
 }

@@ -28,7 +28,7 @@ class Account extends Screen
             $this->screen_options = ['Start', 'Later'];
         } else {
             $this->screen_message = "Manage your account";
-            $this->screen_options = ['Classes', 'Settings', 'Deactivate'];
+            $this->screen_options = ['Classes and Courses', 'Settings', 'Deactivate'];
         }
     }
     protected function message(): string
@@ -51,8 +51,8 @@ class Account extends Screen
     {
         switch ($this->value()) {
 
-            case 'Classes':
-                return (new Conference_Schedule_Cancel_Confirmation($this->request))->render();
+            case 'Classes and Courses':
+                return (new Account_ClassesCourses_Manage($this->request))->render();
 
             case 'Settings':
                 $this->addPayload('reschedule', "1");
