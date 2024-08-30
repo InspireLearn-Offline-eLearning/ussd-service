@@ -135,6 +135,22 @@ class AsteriskDB
 
         return $classlist;
     }
+    public function getUserCourseList($user_id, $class_id)
+    {
+        $avail = Asterisk_CourseRegistration::query()
+            ->join('course', 'course_registration.course_id', '=', 'course.course_id')
+            ->where('course_registration.user_id', $user_id)
+            ->where('course.class_id', $class_id)
+            ->select('course_registration.course_id as course_id', 'course.name as name') // Select the columns you need from the course table
+            ->get();
+
+        $courselist = $avail->map(function ($course_registration) {
+
+            return $course_registration->course_id . ":  " . $course_registration->name;
+        })->toArray();
+
+        return $courselist;
+    }
     public function updateConferenceStatus($conference_id, $newStatus)
     {
 
