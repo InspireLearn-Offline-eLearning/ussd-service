@@ -9,6 +9,7 @@ use App\Models\Asterisk_Conference;
 use App\Models\Asterisk_Courses;
 use App\Models\Asterisk_InvalidCodeAttempts;
 use App\Models\Asterisk_UserRequests;
+use App\Models\Asterisk_Languages;
 use Carbon\Carbon;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
@@ -71,7 +72,16 @@ class AsteriskDB
         }
 
         return false;
+    }
+    public function getLanguages($user_id)
+    {
+        $curr_language = Asterisk_User::where('user_id', $user_id)->pluck('language');
+        return Asterisk_Languages::whereNotIn('name', [$curr_language])->pluck('name')->toArray();
+    }
 
+    public function changeUserLanguage($user_id, $new_language)
+    {
+        return Asterisk_User::where('user_id', $user_id)->update(['language' => $new_language]);
     }
     public function exitCourse($user_id, $course_id)
     {
@@ -83,9 +93,8 @@ class AsteriskDB
             ->delete();
 
         if ($deletedrows > 0)  return true;
-  
-        return false;
 
+        return false;
     }
     public function createConference($phoneNumber, $conf_schedule, $conf_course, $conf_class_id): Asterisk_Conference
     {

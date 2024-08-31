@@ -25,20 +25,13 @@ class Account_Courses_Exit_Confirm extends Screen
         return ['Confirm', 'Cancel'];    
     }
 
-    /**
-    * Previous screen
-    * return Screen $screen
-    */
+ 
     public function previous(): Screen
     {
         return new Welcome($this->request);
     }
 
-    /**
-     * Execute the selected option/action
-     *
-     * @return mixed
-     */
+ 
     protected function execute() : mixed
     {
         switch ($this->value()) {

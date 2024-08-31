@@ -23,8 +23,8 @@ class Account_Courses_Enrolled extends Screen
         $getcouselist= $this->service->getUserCourseList($this->request->msisdn, $this->payload("selected_class_id"));
         
         if ($getcouselist == null) {
-            $this->screen_message = "No courses found! Enroll in a course today.";
-            $this->screen_options = ["Start","Cancel"];
+            $this->screen_message = "No courses found, request for access code from class leader!";
+            // $this->screen_options = ["Continue","Cancel"];
         } else {
             $this->screen_message = "Select a course from the list to exit.";
             $this->screen_options = $getcouselist;
@@ -56,6 +56,7 @@ class Account_Courses_Enrolled extends Screen
     {
         $this->addPayload("selected_course_id",trim(explode(':',$this->value())[0]));
         $this->addPayload("selected_course",trim(explode(':',$this->value())[1]));
+
         return (new Account_Courses_Exit_Confirm($this->request))->render();
         
     }

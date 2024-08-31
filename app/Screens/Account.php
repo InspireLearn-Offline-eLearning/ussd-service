@@ -56,7 +56,7 @@ class Account extends Screen
 
             case 'Settings':
                 $this->addPayload('reschedule', "1");
-                return (new Schedule_Conf_Date($this->request))->render();
+                return (new Account_Settings($this->request))->render();
 
             case 'Start':
                 return (new Account_Profile_Update_Start($this->request))->render();
