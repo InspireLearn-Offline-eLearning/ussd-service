@@ -28,16 +28,19 @@ class Welcome extends Screen
         parent::__construct($request); // Call the parent constructor if needed
         $this->service = new AsteriskDB();
         $validated_user = $this->service->validate($this->request->msisdn);
-        
+
         if ($validated_user == null) {
             $this->screen_message = "Welcome to InspireLearn! Continue if you have read and accepted our terms and conditions.";
-            $this->screen_options = ['Continue', 'Cancel'];
-        } else {
+            $this->screen_options = ['Continue', 'Abort'];
+        } elseif ($validated_user->status == 'active') {
             $this->screen_message =  sprintf("Dear %s, Welcome to InspireLearn", $validated_user->f_name);
             $this->screen_options = ['Bundles', 'Conferences', 'Account'];
             // $this->user_object = $validated_user;
             // $this->addPayload('user_obj',$validated_user);
 
+        } else {
+            $this->screen_message =  sprintf("Welcome back to InspireLearn %s , confirm re-activating your account", $validated_user->f_name);
+            $this->screen_options = ['Confirm', 'Cancel'];
         }
     }
     /**
@@ -78,7 +81,7 @@ class Welcome extends Screen
                 $this->service->createUser($this->request->msisdn);
                 return (new Onboarding_getname($this->request))->render();
 
-            case 'Cancel':
+            case 'Abort':
                 $this->service->createUser($this->request->msisdn);
                 return (new Onboarding_tcs_cancel($this->request))->render();
 
@@ -91,6 +94,18 @@ class Welcome extends Screen
 
             case 'Account':
                 return (new Account($this->request))->render();
+
+            case 'Cancel':
+                throw new UssdException($this->request, "Account stil inactive. We hope to see you back soon.");
+
+            case 'Confirm':
+
+                $user = (new AsteriskDB())->reactivateUser($this->request->msisdn);
+
+                if ($user) throw new UssdException($this->request, "Account re-activated! Please restart session.");
+
+                throw new UssdException($this->request, "Something went wrong, please try again later!");
+
 
             default:
                 throw new UssdException($this->request, "Something went wrong, Please try again later");

@@ -38,7 +38,7 @@ class Account_Settings_Deactivate extends Screen
 
                 $user = (new AsteriskDB())->deactivateUser($this->request->msisdn);
 
-                if ($user) throw new UssdException($this->request, "Language changed successfully!");
+                if ($user) throw new UssdException($this->request, "Account deactivated! we hope to have you back soon.");
 
                 throw new UssdException($this->request, "Something went wrong, please try again later!");
 

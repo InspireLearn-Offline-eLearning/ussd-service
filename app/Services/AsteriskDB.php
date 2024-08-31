@@ -19,6 +19,7 @@ class AsteriskDB
     public function validate(string $phoneNumber): mixed
     {
         return Asterisk_User::where('phone', $phoneNumber)->first();
+
     }
 
     public function createUser($phoneNumber): Asterisk_User
@@ -51,6 +52,10 @@ class AsteriskDB
     public function deactivateUser($user_id)
     {
         return Asterisk_User::query()->where('user_id', $user_id)->update(['status' => "inactive"]);
+    }
+    public function reactivateUser($user_id)
+    {
+        return Asterisk_User::query()->where('user_id', $user_id)->update(['status' => "active"]);
     }
     public function addNameRoleToUser($phoneNumber, $f_name, $role): int
     {
