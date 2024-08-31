@@ -48,6 +48,10 @@ class AsteriskDB
         }
     }
 
+    public function deactivateUser($user_id)
+    {
+        return Asterisk_User::query()->where('user_id', $user_id)->update(['status' => "inactive"]);
+    }
     public function addNameRoleToUser($phoneNumber, $f_name, $role): int
     {
         return Asterisk_User::query()->where('phone', $phoneNumber)->update(['f_name' => $f_name, 'role' => $role]);

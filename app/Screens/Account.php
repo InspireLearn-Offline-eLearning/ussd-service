@@ -64,7 +64,7 @@ class Account extends Screen
                 throw new UssdException($this->request, "Thankyou for your response!");
 
             case 'Deactivate':
-                throw new UssdException($this->request, "Thankyou for your response!");
+                return (new Account_Settings_Deactivate($this->request))->render();
 
             default:
             return (new Welcome($this->request))->render();

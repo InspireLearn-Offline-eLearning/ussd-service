@@ -6,6 +6,8 @@ namespace App\Screens;
 
 use TNM\USSD\Screen;
 use TNM\USSD\Exceptions\UssdException;
+use App\Services\AsteriskDB;
+
 
 class Account_Courses_Exit_Confirm extends Screen
 {
@@ -22,22 +24,27 @@ class Account_Courses_Exit_Confirm extends Screen
      */
     protected function options(): array
     {
-        return ['Confirm', 'Cancel'];    
+        return ['Confirm', 'Cancel'];
     }
 
- 
+
     public function previous(): Screen
     {
         return new Welcome($this->request);
     }
 
- 
-    protected function execute() : mixed
+
+    protected function execute(): mixed
     {
         switch ($this->value()) {
 
             case 'Confirm':
-                return (new Account_Courses_Exit_Status($this->request))->render();
+
+                $result = (new AsteriskDB())->exitCourse($this->request->msisdn, $this->payload("selected_course_id"));
+
+                if ($result) throw new UssdException($this->request, "Course dropped successfully!");
+
+                throw new UssdException($this->request, "Something went wrong, please try again later");
 
             case 'Cancel':
 

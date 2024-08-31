@@ -52,8 +52,6 @@ class Schedule_Conf_Confirm extends Screen
 
             $this->service = new AsteriskDB();
             $formated_schedule_date = $this->payload('conf_date') . ' ' . $this->payload('conf_time') . ':' . '00';
-            \Log::debug('formatted date: ', ['value' => $formated_schedule_date]);
-            \Log::debug('conf id: ', ['value' => trim(explode('>', $this->payload("selected_conference"))[0])]);
 
             if ($this->payload("reschedule")==="1") {
                 $result = $this->service->updateConference(trim(explode('>', $this->payload("selected_conference"))[0]), $formated_schedule_date);
@@ -67,7 +65,7 @@ class Schedule_Conf_Confirm extends Screen
 
 
             if ($result != null) {
-                return (new Schedule_Conf_Confirm_Status($this->request))->render();
+                return throw new UssdException($this->request, "Conference scheduled successfully!");
             }
             return throw new UssdException($this->request, "Coudn't schedule conference, Please try again later");
         } else {
