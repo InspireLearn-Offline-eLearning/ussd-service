@@ -5,18 +5,15 @@ namespace App\Screens;
 
 
 use TNM\USSD\Screen;
+use TNM\USSD\Exceptions\UssdException;
 
 class Account_Courses_Exit_Confirm extends Screen
 {
 
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
+
     protected function message(): string
     {
-        return "{{message}}";
+        return "Confirm you want to drop course: " . $this->payload("selected_course");
     }
 
     /**
@@ -25,7 +22,7 @@ class Account_Courses_Exit_Confirm extends Screen
      */
     protected function options(): array
     {
-        return [];
+        return ['Confirm', 'Cancel'];    
     }
 
     /**
@@ -42,8 +39,19 @@ class Account_Courses_Exit_Confirm extends Screen
      *
      * @return mixed
      */
-    protected function execute()
+    protected function execute() : mixed
     {
-        // TODO: Implement execute() method.
+        switch ($this->value()) {
+
+            case 'Confirm':
+                return (new Account_Courses_Exit_Status($this->request))->render();
+
+            case 'Cancel':
+
+                throw new UssdException($this->request, "Course not dropped!");
+
+            default:
+                throw new UssdException($this->request, "Please try again later");
+        }
     }
 }

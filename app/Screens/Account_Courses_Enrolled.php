@@ -23,7 +23,7 @@ class Account_Courses_Enrolled extends Screen
         $getcouselist= $this->service->getUserCourseList($this->request->msisdn, $this->payload("selected_class_id"));
         
         if ($getcouselist == null) {
-            $this->screen_message = "Enroll in a course today.";
+            $this->screen_message = "No courses found! Enroll in a course today.";
             $this->screen_options = ["Start","Cancel"];
         } else {
             $this->screen_message = "Select a course from the list to exit.";
@@ -54,19 +54,9 @@ class Account_Courses_Enrolled extends Screen
      */
     protected function execute(): mixed
     {
-        switch ($this->value()) {
-
-            case 'Confirm':
-
-                // $this->service
-                throw new UssdException($this->request, "Existed successfully!");
-
-            case 'Cancel':
-
-                throw new UssdException($this->request, "Failed to dropout of class");
-
-            default:
-                throw new UssdException($this->request, "Please try again later");
-        }
+        $this->addPayload("selected_course_id",trim(explode(':',$this->value())[0]));
+        $this->addPayload("selected_course",trim(explode(':',$this->value())[1]));
+        return (new Account_Courses_Exit_Confirm($this->request))->render();
+        
     }
 }

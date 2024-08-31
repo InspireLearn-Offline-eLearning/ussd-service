@@ -9,29 +9,18 @@ use TNM\USSD\Screen;
 class Schedule_Conf_Confirm_Status extends Screen
 {
 
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
+
     protected function message(): string
     {
         return " Conference scheduled successfully!";
     }
 
-    /**
-     * Add options to the screen
-     * @return array
-     */
     protected function options(): array
     {
         return [];
     }
 
-    /**
-    * Previous screen
-    * return Screen $screen
-    */
+ 
     public function previous(): Screen
     {
         return new Welcome($this->request);
