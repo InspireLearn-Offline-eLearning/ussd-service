@@ -52,6 +52,31 @@ class AsteriskDB
         return Asterisk_User::query()->where('phone', $phoneNumber)->update(['f_name' => $f_name, 'role' => $role]);
     }
 
+
+    public function exitCourses($user_id, $class_id, $course_id = null)
+    {
+
+        if ($course_id === null) {
+
+            $deletedrows = Asterisk_CourseRegistration::where('user_id', $user_id)
+                ->whereHas('course', function ($query) use ($class_id) {
+                    $query->where('class_id', $class_id);
+                })
+                ->delete();
+
+            if ($deletedrows > 0) {
+                Asterisk_ClassRegistration::where('user_id', $user_id)
+                    ->where('class_id', $class_id)
+                    ->delete();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        // implement when a course_id has been provided
+    }
     public function createConference($phoneNumber, $conf_schedule, $conf_course, $conf_class_id): Asterisk_Conference
     {
 

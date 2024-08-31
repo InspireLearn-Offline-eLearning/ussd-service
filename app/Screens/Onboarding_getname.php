@@ -42,6 +42,7 @@ class Onboarding_getname extends Screen
     protected function execute(): mixed
     {
         
+        $this->addPayload("registered_user_role", "0"); //initialiser
         $this->validate($this->request,'first name');
         $this->addPayload('f_name', $this->value());
         return (new Onboarding_usertype($this->request))->render();

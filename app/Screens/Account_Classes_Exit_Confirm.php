@@ -6,9 +6,10 @@ namespace App\Screens;
 
 use TNM\USSD\Screen;
 use TNM\USSD\Exceptions\UssdException;
+use App\Services\AsteriskDB;
 
 
-class Account_ClassesCourses_Exit extends Screen
+class Account_Classes_Exit_Confirm extends Screen
 {
 
     protected AsteriskDB $service;
@@ -37,9 +38,7 @@ class Account_ClassesCourses_Exit extends Screen
         switch ($this->value()) {
 
             case 'Confirm':
-
-                // $this->service
-                throw new UssdException($this->request, "Existed successfully!");
+                return (new Account_Classes_Exit_Status($this->request))->render();
 
             case 'Cancel':
 

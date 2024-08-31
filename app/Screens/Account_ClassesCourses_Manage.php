@@ -44,10 +44,10 @@ class Account_ClassesCourses_Manage extends Screen
 
             case 'Join new':
                 $this->addPayload("registered_user_role","1");
-                return (new Onboarding_getcode($this->request))->render();
+                return (new Onboarding_usertype($this->request))->render();
 
             case 'View/Exit':
-                return (new Account_ClassesCourses_View($this->request))->render();
+                return (new Account_Classes_View($this->request))->render();
 
             default:
                 throw new UssdException($this->request, "Thankyou for your response!");

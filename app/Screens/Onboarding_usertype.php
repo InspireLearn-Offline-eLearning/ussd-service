@@ -12,14 +12,20 @@ class Onboarding_usertype extends Screen
 {
 
     protected AsteriskDB $service;
+    protected string $screen_message;
+    protected array $screen_options;
     public function __construct($request)
     {
         parent::__construct($request);
         $this->service = new AsteriskDB();
+        $this->screen_message = "Please select your role:";
+        if ($this->payload("registered_user_role") === "0") $this->screen_options = ['Student', 'Teacher', 'Guest'];
+
+        $this->screen_options = ['Student', 'Teacher'];
     }
     protected function message(): string
     {
-        return "Please select your role:";
+        return $this->screen_message;
     }
 
     /**
@@ -28,7 +34,7 @@ class Onboarding_usertype extends Screen
      */
     protected function options(): array
     {
-        return ['Student', 'Teacher', 'Guest'];
+        return $this->screen_options;
     }
 
     /**
@@ -37,18 +43,16 @@ class Onboarding_usertype extends Screen
      */
     public function previous(): Screen
     {
-        return new Onboarding_getname($this->request);
+
+
+        if ($this->payload("registered_user_role") === "0") return new Onboarding_getname($this->request);
+        return new Account_ClassesCourses_Manage($this->request);
     }
 
-    /**
-     * Execute the selected option/action
-     *
-     * @return mixed
-     */
+
     protected function execute(): mixed
     {
 
-        $this->addPayload("registered_user_role","0");
 
         switch ($this->value()) {
 
@@ -63,7 +67,8 @@ class Onboarding_usertype extends Screen
 
             case 'Student':
                 $this->addPayload('user_role', 'student');
-                $this->service->addNameRoleToUser($this->request->msisdn, $this->payload("f_name"), $this->payload("user_role"));
+                if ($this->payload("registered_user_role") === "0") $this->service->addNameRoleToUser($this->request->msisdn, $this->payload("f_name"), $this->payload("user_role"));
+
                 return (new Onboarding_getcode($this->request))->render();
 
             default:

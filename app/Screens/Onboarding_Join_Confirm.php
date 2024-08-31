@@ -43,10 +43,7 @@ class Onboarding_Join_Confirm extends Screen
         return $this->screen_options;
     }
 
-    /**
-     * Previous screen
-     * return Screen $screen
-     */
+
     public function previous(): Screen
     {
         return new Welcome($this->request);

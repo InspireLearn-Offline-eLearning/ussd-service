@@ -8,7 +8,7 @@ use TNM\USSD\Screen;
 use TNM\USSD\Exceptions\UssdException;
 
 
-class Account_ClassesCoursesSelected extends Screen
+class Account_Classes_Selected extends Screen
 {
 
 
@@ -20,7 +20,7 @@ class Account_ClassesCoursesSelected extends Screen
 
     protected function options(): array
     {
-        return ["View Courses Enrolled","Exit Class"];
+        return ["View Courses Enrolled", "Exit Class"];
     }
 
 
@@ -30,22 +30,26 @@ class Account_ClassesCoursesSelected extends Screen
     }
 
 
-    protected function execute(): mixed {
+    protected function execute(): mixed
+
+    {
+        $this->addPayload("selected_class_id", trim(explode(':', $this->payload("selected_class"))[0]));
+
 
         switch ($this->value()) {
 
             case 'View Courses Enrolled':
 
-                $this->addPayload("selected_class_id",trim(explode(':', $this->payload("selected_class"))[0]));
+                // $this->addPayload("selected_class_id",trim(explode(':', $this->payload("selected_class"))[0]));
 
-                return (new Account_ClassesCourses_Enrolled($this->request))->render();
+                return (new Account_Courses_Enrolled($this->request))->render();
 
-                case 'Exit Class':
+            case 'Exit Class':
 
-                    return (new Account_ClassesCourses_Exit($this->request))->render();
+                return (new Account_Classes_Exit_Confirm($this->request))->render();
 
-                default: 
+            default:
                 throw new UssdException($this->request, "Unabled to exit class now Please try again later");
-            }
+        }
     }
 }
