@@ -15,29 +15,17 @@ class Classes_Conferences extends Screen
         return "Conferences";
     }
 
-    /**
-     * Add options to the screen
-     * @return array
-     */
     protected function options(): array
     {
         return ['View/Update', 'Schedule new'];
     }
 
-    /**
-     * Previous screen
-     * return Screen $screen
-     */
+
     public function previous(): Screen
     {
         return new Welcome($this->request);
     }
 
-    /**
-     * Execute the selected option/action
-     *
-     * @return mixed
-     */
     protected function execute(): mixed
     {
         // TODO: Implement execute() method.

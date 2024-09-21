@@ -35,19 +35,17 @@ class Welcome extends Screen
         } elseif ($validated_user->status == 'active') {
             $this->screen_message =  sprintf("Dear %s, Welcome to InspireLearn", $validated_user->f_name);
             $this->screen_options = ['Bundles', 'Conferences', 'Account'];
-            // $this->user_object = $validated_user;
-            // $this->addPayload('user_obj',$validated_user);
+     
+            $this->addPayload('user_role',$validated_user->role);
 
         } else {
             $this->screen_message =  sprintf("Welcome back to InspireLearn %s , confirm re-activating your account", $validated_user->f_name);
             $this->screen_options = ['Confirm', 'Cancel'];
+            $this->addPayload('user_role',$validated_user->role);
+
         }
     }
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
+ 
     protected function message(): string
     {
         return $this->screen_message;

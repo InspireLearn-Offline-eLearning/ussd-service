@@ -5,18 +5,30 @@ namespace App\Screens;
 
 
 use TNM\USSD\Screen;
+use App\Services\AsteriskDB;
 
 class Schedule_Conf_Class extends Screen
 {
 
-    /**
-     * Add message to the screen
-     *
-     * @return string
-     */
+    protected AsteriskDB $service;
+    protected string $screen_message;
+    protected array $screen_options;
+    public function __construct($request)
+    {
+        parent::__construct($request);
+        $this->service = new AsteriskDB();
+        $getclasslist = $this->service->getUserClassList($this->request->msisdn);
+        if ($getclasslist == null) {
+            $this->screen_message = "You dont belong to any class, in the Home menu go to Accounts and join a class";
+            $this->screen_options = [];
+        } else {
+            $this->screen_message = "Scheduling a conference, select class";
+            $this->screen_options = $getclasslist;
+        }
+    }
     protected function message(): string
     {
-        return "Scheduling a conference, select class";
+        return $this->screen_message;
     }
 
     /**
@@ -25,13 +37,13 @@ class Schedule_Conf_Class extends Screen
      */
     protected function options(): array
     {
-        return ['Form4-Biology','Form3-Biology'];
+        return $this->screen_options;
     }
 
     /**
-    * Previous screen
-    * return Screen $screen
-    */
+     * Previous screen
+     * return Screen $screen
+     */
     public function previous(): Screen
     {
         return new Classes_Conferences($this->request);

@@ -19,9 +19,11 @@ class Onboarding_usertype extends Screen
         parent::__construct($request);
         $this->service = new AsteriskDB();
         $this->screen_message = "Please select your role:";
-        if ($this->payload("registered_user_role") === "0") $this->screen_options = ['Student', 'Teacher', 'Guest'];
-
-        $this->screen_options = ['Student', 'Teacher'];
+        if ($this->payload("registered_user_role") === "0") {
+            $this->screen_options = ['Student', 'Teacher', 'Guest'];
+        } else {
+            $this->screen_options = ['Student', 'Teacher'];
+        }
     }
     protected function message(): string
     {
@@ -45,7 +47,8 @@ class Onboarding_usertype extends Screen
     {
 
 
-        if ($this->payload("registered_user_role") === "0") return new Onboarding_getname($this->request);
+        if ($this->payload("registered_user_role") === "0")
+            return new Onboarding_getname($this->request);
         return new Account_ClassesCourses_Manage($this->request);
     }
 
@@ -67,7 +70,8 @@ class Onboarding_usertype extends Screen
 
             case 'Student':
                 $this->addPayload('user_role', 'student');
-                if ($this->payload("registered_user_role") === "0") $this->service->addNameRoleToUser($this->request->msisdn, $this->payload("f_name"), $this->payload("user_role"));
+                if ($this->payload("registered_user_role") === "0")
+                    $this->service->addNameRoleToUser($this->request->msisdn, $this->payload("f_name"), $this->payload("user_role"));
 
                 return (new Onboarding_getcode($this->request))->render();
 
